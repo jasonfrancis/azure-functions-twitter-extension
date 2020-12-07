@@ -27,4 +27,28 @@ namespace TwitterTriggerExtension
             User = user;
         }
     }
+
+    /// <summary>
+    /// Attribute used to mark a job function that should be invoked based on
+    /// twitter V2 API events.
+    /// </summary>
+    /// <remarks>
+    /// The method parameter type should be <see cref="Tweetinvi.Tweet"/>
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Parameter)]
+    [Binding]
+    public sealed class TwitterTriggerV2Attribute : Attribute
+    {
+        public string V2ConsumerKey { get; set; } = "TwitterV2ConsumerKey";
+        public string V2ConsumerSecret { get; set; } = "TwitterV2ConsumerSecret";
+        public string V2BearerToken { get; set; } = "TwitterV2BearerToken";
+        public string Filter { get; private set; }
+        public string User { get; private set; }
+
+        public TwitterTriggerV2Attribute(string filter = null, string user = null)
+        {
+            Filter = filter;
+            User = user;
+        }
+    }
 }

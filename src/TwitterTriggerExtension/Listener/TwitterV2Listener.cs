@@ -11,14 +11,14 @@ using Tweetinvi.Parameters.V2;
 
 namespace TwitterTriggerExtension
 {
-	public class TwitterListenerV2 : IListener
+	public class TwitterV2Listener : IListener
 	{
 		public ITriggeredFunctionExecutor Executor { get; }
 
-        private TwitterTriggerAttribute _attribute;
+        private TwitterTriggerV2Attribute _attribute;
         private Tweetinvi.Streaming.V2.IFilteredStreamV2 _filteredStream;
 		
-		public TwitterListenerV2(ITriggeredFunctionExecutor executor, TwitterTriggerAttribute attribute)
+		public TwitterV2Listener(ITriggeredFunctionExecutor executor, TwitterTriggerV2Attribute attribute)
         {
             Executor = executor ?? throw new ArgumentNullException(nameof(executor));
             _attribute = attribute ?? throw new ArgumentNullException(nameof(attribute));
@@ -85,7 +85,7 @@ namespace TwitterTriggerExtension
 
 		private void HandleFilteredStreamRulesResponseErrors(FilteredStreamRulesV2Response response)
 		{
-			if(response.Errors.Count() > 0)
+			if(response.Errors != null && response.Errors.Count() > 0)
 			{
 				var error = response.Errors.First();
 				throw new Exception($"{error.Title} {error.Reason} {error.Detail}");
