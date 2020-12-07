@@ -4,7 +4,16 @@
     <AzureFunctionsVersion>v2</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.7" />
+=======
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.11" />
+>>>>>>> intro/master
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TwitterTriggerExtension\TwitterTriggerExtension.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
