@@ -9,42 +9,13 @@ using Tweetinvi.Events.V2;
 
 namespace TwitterTriggerExtension
 {
-    public class TwitterTriggerV2AttributeBindingProvider : ITriggerBindingProvider
+    public class TwitterTriggerV2AttributeBindingProvider : TwitterTriggerAttributeBindingProviderBase<TwitterTriggerV2Attribute, FilteredStreamTweetV2EventArgs>
     {
-        private readonly ILogger _logger;
+        public TwitterTriggerV2AttributeBindingProvider(ILoggerFactory loggerFactory) : base(loggerFactory){}
 
-        public TwitterTriggerV2AttributeBindingProvider(ILoggerFactory loggerFactory)
-        {
-            _logger = loggerFactory?.CreateLogger(LogCategories.CreateTriggerCategory("Twitter"));
-        }
-
-        public Task<ITriggerBinding> TryCreateAsync(TriggerBindingProviderContext context)
-        {
-            if(context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
-
-            //Retrieve Parameter
-            ParameterInfo parameter = context.Parameter;
-            TwitterTriggerV2Attribute attribute = parameter.GetCustomAttribute<TwitterTriggerV2Attribute>(inherit: false);
-            if(attribute == null)
-            {
-                return Task.FromResult<ITriggerBinding>(null);
-            }
-
-            //Validate Trigger
-            if (!IsSupportedBindingType(parameter.ParameterType))
-            {
-                throw new InvalidOperationException($"Can't bind TwitterTriggerV2Attribute to type '{parameter.ParameterType}'");
-            }
-
-            return Task.FromResult<ITriggerBinding>(new TwitterTriggerV2Binding(parameter, _logger));
-        }
-
-        private bool IsSupportedBindingType(Type t)
-        {
-            return t == typeof(FilteredStreamTweetV2EventArgs);
-        }
-    }
+		protected override ITriggerBinding GetTriggerBinding(ParameterInfo parameter, ILogger logger)
+		{
+			return new TwitterTriggerV2Binding(parameter, logger);
+		}
+	}
 }

@@ -12,14 +12,12 @@ namespace TwitterTriggerExtension
     /// </remarks>
     [AttributeUsage(AttributeTargets.Parameter)]
     [Binding]
-    public sealed class TwitterTriggerAttribute : Attribute
+    public sealed class TwitterTriggerAttribute : TwitterTriggerAttributeBase
     {
         public string ConsumerKey { get; set; } = "TwitterConsumerKey";
         public string ConsumerSecret { get; set; } = "TwitterConsumerSecret";
         public string AccessKey { get; set; } = "TwitterAccessKey";
         public string AccessSecret { get; set; } = "TwitterAccessSecret";
-        public string Filter { get; private set; }
-        public string User { get; private set; }
 
         public TwitterTriggerAttribute(string filter = null, string user = null)
         {
