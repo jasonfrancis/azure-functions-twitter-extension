@@ -37,13 +37,11 @@ namespace TwitterTriggerExtension
     /// </remarks>
     [AttributeUsage(AttributeTargets.Parameter)]
     [Binding]
-    public sealed class TwitterTriggerV2Attribute : Attribute
+    public sealed class TwitterTriggerV2Attribute : TwitterTriggerAttributeBase
     {
         public string V2ConsumerKey { get; set; } = "TwitterV2ConsumerKey";
         public string V2ConsumerSecret { get; set; } = "TwitterV2ConsumerSecret";
         public string V2BearerToken { get; set; } = "TwitterV2BearerToken";
-        public string Filter { get; private set; }
-        public string User { get; private set; }
 
         public TwitterTriggerV2Attribute(string filter = null, string user = null)
         {
