@@ -9,24 +9,16 @@ using Tweetinvi.Streaming;
 
 namespace TwitterTriggerExtension
 {
-    public class TwitterListener : IListener
+    public class TwitterListener : TwitterListenerBase<TwitterTriggerAttribute, IFilteredStream>
     {
-        public ITriggeredFunctionExecutor Executor { get; }
+        public TwitterListener(ITriggeredFunctionExecutor executor, TwitterTriggerAttribute attribute) : base(executor, attribute) {}
 
-        private TwitterTriggerAttribute _attribute;
-        private IFilteredStream _filteredStream;
+		public override void Cancel()
+		{
+			_filteredStream.Stop();
+		}
 
-        public TwitterListener(ITriggeredFunctionExecutor executor, TwitterTriggerAttribute attribute)
-        {
-            Executor = executor ?? throw new ArgumentNullException(nameof(executor));
-            _attribute = attribute ?? throw new ArgumentNullException(nameof(attribute));
-        }
-
-        public void Cancel() { }
-
-        public void Dispose() { }
-
-        public async Task StartAsync(CancellationToken cancellationToken)
+		public override async Task StartAsync(CancellationToken cancellationToken)
         {
             var consumerKey = Environment.GetEnvironmentVariable("TwitterConsumerKey");
             var consumerSecret = Environment.GetEnvironmentVariable("TwitterConsumerSecret");
@@ -65,11 +57,10 @@ namespace TwitterTriggerExtension
             await _filteredStream.StartMatchingAllConditionsAsync();
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+		public override Task StopAsync(CancellationToken cancellationToken)
         {
             _filteredStream.Stop();
             return Task.CompletedTask;
         }
-
-    }
+	}
 }

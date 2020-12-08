@@ -5,45 +5,27 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Tweetinvi.Events;
+using Tweetinvi.Events.V2;
 
 namespace TwitterTriggerExtension
 {
-    public class TwitterTriggerAttributeBindingProvider : ITriggerBindingProvider
+    public class TwitterTriggerAttributeBindingProvider : TwitterTriggerAttributeBindingProviderBase<TwitterTriggerAttribute, MatchedTweetReceivedEventArgs>
     {
-        private readonly ILogger _logger;
+        public TwitterTriggerAttributeBindingProvider(ILoggerFactory loggerFactory) : base(loggerFactory){}
 
-        public TwitterTriggerAttributeBindingProvider(ILoggerFactory loggerFactory)
-        {
-            _logger = loggerFactory?.CreateLogger(LogCategories.CreateTriggerCategory("Twitter"));
-        }
-
-        public Task<ITriggerBinding> TryCreateAsync(TriggerBindingProviderContext context)
-        {
-            if(context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
-
-            //Retrieve Parameter
-            ParameterInfo parameter = context.Parameter;
-            TwitterTriggerAttribute attribute = parameter.GetCustomAttribute<TwitterTriggerAttribute>(inherit: false);
-            if(attribute == null)
-            {
-                return Task.FromResult<ITriggerBinding>(null);
-            }
-
-            //Validate Trigger
-            if (!IsSupportedBindingType(parameter.ParameterType))
-            {
-                throw new InvalidOperationException($"Can't bind TwitterTriggerAttribute to type '{parameter.ParameterType}'");
-            }
-
-            return Task.FromResult<ITriggerBinding>(new TwitterTriggerBinding(parameter, _logger));
-        }
-
-        private bool IsSupportedBindingType(Type t)
-        {
-            return t == typeof(MatchedTweetReceivedEventArgs);
-        }
+		protected override ITriggerBinding GetTriggerBinding(ParameterInfo parameter, ILogger logger)
+		{
+			return new TwitterTriggerBinding(parameter, logger);
+		}
     }
+
+    public class TwitterTriggerV2AttributeBindingProvider : TwitterTriggerAttributeBindingProviderBase<TwitterTriggerV2Attribute, FilteredStreamTweetV2EventArgs>
+    {
+        public TwitterTriggerV2AttributeBindingProvider(ILoggerFactory loggerFactory) : base(loggerFactory){}
+
+		protected override ITriggerBinding GetTriggerBinding(ParameterInfo parameter, ILogger logger)
+		{
+			return new TwitterTriggerV2Binding(parameter, logger);
+		}
+	}
 }
