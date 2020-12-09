@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Executors;
+using Microsoft.Extensions.Logging;
 using Tweetinvi;
 using Tweetinvi.Models;
 using Tweetinvi.Models.V2;
@@ -13,8 +14,10 @@ namespace TwitterTriggerExtension
 {
 	public class TwitterV2Listener : TwitterListenerBase<TwitterTriggerV2Attribute, IFilteredStreamV2>
 	{
-		public TwitterV2Listener(ITriggeredFunctionExecutor executor, TwitterTriggerV2Attribute attribute) : base(executor, attribute)
+		private ILogger _log {get; set;}
+		public TwitterV2Listener(ITriggeredFunctionExecutor executor, TwitterTriggerV2Attribute attribute, ILogger logger) : base(executor, attribute)
 		{
+			_log = logger;
 		}
 
 		public override void Cancel()
@@ -34,6 +37,8 @@ namespace TwitterTriggerExtension
 			var credentials = new ConsumerOnlyCredentials(v2ConsumerKey, v2ConsumerSecret, v2BearerToken);
 			var client = new TwitterClient(credentials);
 
+			client.Config.RateLimitTrackerMode = RateLimitTrackerMode.TrackAndAwait;
+
 			// Generate our filter string.
 			var filterString = _attribute.Filter;
 
@@ -48,19 +53,25 @@ namespace TwitterTriggerExtension
 			// Clear out the existing filter rules.
 			var existingRules = await client.StreamsV2.GetRulesForFilteredStreamV2Async();
 			HandleFilteredStreamRulesResponseErrors(existingRules);
-
-			if(existingRules.Rules.Count() > 0)
+			
+			if(existingRules.Rules.Any(r =>r.Value != filterString))
 			{
+				_log.LogInformation("Clearing out existing rules.");
 				var ruleIds = existingRules.Rules.Select(r => r.Id).ToArray();
 				var delResponse = await client.StreamsV2.DeleteRulesFromFilteredStreamAsync(ruleIds);
 				HandleFilteredStreamRulesResponseErrors(delResponse);
+
+				// Set our own filter rules.
+				var rule = new FilteredStreamRuleConfig(filterString);
+				var addRulesResponse = await client.StreamsV2.AddRulesToFilteredStreamAsync(rule);
+				HandleFilteredStreamRulesResponseErrors(addRulesResponse);
+			}
+			else
+			{
+				_log.LogInformation($"Existing stream rules match \"{filterString}\".");
 			}
 
-			// Set our own filter rules.
-			var rule = new FilteredStreamRuleConfig(filterString);
-			var addRulesResponse = await client.StreamsV2.AddRulesToFilteredStreamAsync(rule);
-			HandleFilteredStreamRulesResponseErrors(addRulesResponse);
-
+			_log.LogInformation("Creating Filtered Stream");
 			_filteredStream = client.StreamsV2.CreateFilteredStream();
 
 			_filteredStream.TweetReceived += async (sender, tweetV2Event) =>
@@ -72,7 +83,19 @@ namespace TwitterTriggerExtension
 				await Executor.TryExecuteAsync(triggerData, CancellationToken.None);
 			};
 
-			await _filteredStream.StartAsync();
+			try
+			{
+				_log.LogInformation("Starting filtered stream.");
+				await _filteredStream.StartAsync();
+			}
+			catch(Exception ex)
+			{
+				_log.LogWarning("failed on _filteredStream.StartAsync()");
+				_log.LogWarning($"{ex.GetType()} - {ex.Message}");
+				_log.LogInformation("Waiting 20 seconds and trying again.");
+				await Task.Delay(20000);
+				await _filteredStream.StartAsync();
+			}
 		}
 
 		private void HandleFilteredStreamRulesResponseErrors(FilteredStreamRulesV2Response response)

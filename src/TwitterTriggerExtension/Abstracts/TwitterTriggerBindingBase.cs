@@ -14,7 +14,7 @@ namespace TwitterTriggerExtension
 	{
 		private readonly string _triggerName;
 		private readonly ParameterInfo _parameter;
-        private readonly ILogger _logger;
+        protected readonly ILogger _logger;
         protected readonly T _attribute;
         private readonly IReadOnlyDictionary<string, Type> _bindingContract;
 

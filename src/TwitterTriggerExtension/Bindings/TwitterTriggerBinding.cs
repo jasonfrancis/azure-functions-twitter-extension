@@ -32,7 +32,7 @@ namespace TwitterTriggerExtension
             {
                 throw new ArgumentNullException("context");
             }
-            return Task.FromResult<IListener>(new TwitterV2Listener(context.Executor, _attribute));
+            return Task.FromResult<IListener>(new TwitterV2Listener(context.Executor, _attribute, _logger));
 		}
 	}
 }
