@@ -23,9 +23,9 @@ namespace TweetMonitor
         public static async Task RunV2([TwitterTriggerV2(user: "MirrorReaderBot")] FilteredStreamTweetV2EventArgs tweetEvent, ILogger log)
         {
             log.LogInformation("\nGot a tweet.");
-            // log.LogInformation($"\n@{tweetEvent.Tweet.CreatedBy.ScreenName}[{tweetEvent.Tweet.CreatedBy.Name}]\n" +
-            //     $"Tweeted: {tweetEvent.Tweet.FullText}\n" +
-            //     $"HashTags: [{String.Join(",", tweetEvent.Tweet.Hashtags.Select(x => $"#{x.Text}"))}]");
+            log.LogInformation($"TweetId: {tweetEvent.Tweet.Id}\n" +
+                $"AuthorId: {tweetEvent.Tweet.AuthorId}\n" +
+                $"Tweeted: {tweetEvent.Tweet.Text}\n");
         }
     }
 }
