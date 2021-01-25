@@ -13,19 +13,19 @@ namespace TwitterTriggerExtension
     {
         public TwitterTriggerAttributeBindingProvider(ILoggerFactory loggerFactory) : base(loggerFactory){}
 
-		protected override ITriggerBinding GetTriggerBinding(ParameterInfo parameter, ILogger logger)
-		{
-			return new TwitterTriggerBinding(parameter, logger);
-		}
+        protected override ITriggerBinding GetTriggerBinding(ParameterInfo parameter, ILogger logger)
+        {
+            return new TwitterTriggerBinding(parameter, logger);
+        }
     }
 
     public class TwitterTriggerV2AttributeBindingProvider : TwitterTriggerAttributeBindingProviderBase<TwitterTriggerV2Attribute, FilteredStreamTweetV2EventArgs>
     {
         public TwitterTriggerV2AttributeBindingProvider(ILoggerFactory loggerFactory) : base(loggerFactory){}
 
-		protected override ITriggerBinding GetTriggerBinding(ParameterInfo parameter, ILogger logger)
-		{
-			return new TwitterTriggerV2Binding(parameter, logger);
-		}
-	}
+        protected override ITriggerBinding GetTriggerBinding(ParameterInfo parameter, ILogger logger)
+        {
+            return new TwitterTriggerV2Binding(parameter, logger);
+        }
+    }
 }

@@ -57,7 +57,7 @@ namespace TwitterTriggerExtension
             await _filteredStream.StartMatchingAllConditionsAsync();
         }
 
-		public override Task StopAsync(CancellationToken cancellationToken)
+        public override Task StopAsync(CancellationToken cancellationToken)
         {
             _filteredStream.Stop();
             return Task.CompletedTask;

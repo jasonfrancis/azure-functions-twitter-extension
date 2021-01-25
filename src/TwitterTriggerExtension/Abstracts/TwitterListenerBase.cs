@@ -9,7 +9,7 @@ namespace TwitterTriggerExtension
 {
     public abstract class TwitterListenerBase<A, T> : IListener where A : TwitterTriggerAttributeBase
     {
-		public ITriggeredFunctionExecutor Executor { get; }
+        public ITriggeredFunctionExecutor Executor { get; }
 
         protected A _attribute;
         protected T _filteredStream;
@@ -27,5 +27,5 @@ namespace TwitterTriggerExtension
         public abstract Task StartAsync(CancellationToken cancellationToken);
 
         public abstract Task StopAsync(CancellationToken cancellationToken);
-	}
+    }
 }

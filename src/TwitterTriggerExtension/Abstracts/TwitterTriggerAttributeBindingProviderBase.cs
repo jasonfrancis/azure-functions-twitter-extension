@@ -9,16 +9,16 @@ namespace TwitterTriggerExtension
 {
     public abstract class TwitterTriggerAttributeBindingProviderBase<A, E> : ITriggerBindingProvider where A : TwitterTriggerAttributeBase 
     {
-		protected readonly ILogger _logger;
+        protected readonly ILogger _logger;
 
         public TwitterTriggerAttributeBindingProviderBase(ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory?.CreateLogger(LogCategories.CreateTriggerCategory("Twitter"));
         }
 
-		protected abstract ITriggerBinding GetTriggerBinding(ParameterInfo parameter, ILogger logger);
+        protected abstract ITriggerBinding GetTriggerBinding(ParameterInfo parameter, ILogger logger);
 
-		public Task<ITriggerBinding> TryCreateAsync(TriggerBindingProviderContext context)
+        public Task<ITriggerBinding> TryCreateAsync(TriggerBindingProviderContext context)
         {
             if(context == null)
             {
@@ -43,5 +43,5 @@ namespace TwitterTriggerExtension
         {
             return t == typeof(E);
         }
-	}
+    }
 }

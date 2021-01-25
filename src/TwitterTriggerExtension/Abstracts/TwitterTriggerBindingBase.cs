@@ -10,10 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace TwitterTriggerExtension
 {
-	public abstract class TwitterTriggerBindingBase<T, E> : ITriggerBinding where T : TwitterTriggerAttributeBase
-	{
-		private readonly string _triggerName;
-		private readonly ParameterInfo _parameter;
+    public abstract class TwitterTriggerBindingBase<T, E> : ITriggerBinding where T : TwitterTriggerAttributeBase
+    {
+        private readonly string _triggerName;
+        private readonly ParameterInfo _parameter;
         protected readonly ILogger _logger;
         protected readonly T _attribute;
         private readonly IReadOnlyDictionary<string, Type> _bindingContract;
@@ -27,10 +27,10 @@ namespace TwitterTriggerExtension
             _bindingContract = CreateBindingContract();
         }
 
-		public IReadOnlyDictionary<string, Type> BindingDataContract => _bindingContract;
-		public Type TriggerValueType => typeof(E);
+        public IReadOnlyDictionary<string, Type> BindingDataContract => _bindingContract;
+        public Type TriggerValueType => typeof(E);
 
-		private IReadOnlyDictionary<string, Type> CreateBindingContract()
+        private IReadOnlyDictionary<string, Type> CreateBindingContract()
         {
             if(string.IsNullOrWhiteSpace(_triggerName))
             {
@@ -41,10 +41,10 @@ namespace TwitterTriggerExtension
             return contract;
         }
 
-		public Task<ITriggerData> BindAsync(object value, ValueBindingContext context)
+        public Task<ITriggerData> BindAsync(object value, ValueBindingContext context)
         {
             E tweetEvent = (E)Convert.ChangeType(value, typeof(E));
-			if (tweetEvent == null)
+            if (tweetEvent == null)
             {
                 string tweetInfo = value as string;
                 tweetEvent = GetEventArgsFromString(tweetInfo);
@@ -55,7 +55,7 @@ namespace TwitterTriggerExtension
             return Task.FromResult<ITriggerData>(new TriggerData(null, bindingData));
         }
 
-		private IReadOnlyDictionary<string, object> GetBindingData(E value)
+        private IReadOnlyDictionary<string, object> GetBindingData(E value)
         {
             if (value == null)
             {
@@ -68,7 +68,7 @@ namespace TwitterTriggerExtension
             return bindingData;
         }
 
-		internal static E GetEventArgsFromString(string tweetInfo)
+        internal static E GetEventArgsFromString(string tweetInfo)
         {
             if (!string.IsNullOrEmpty(tweetInfo))
             {
@@ -78,7 +78,7 @@ namespace TwitterTriggerExtension
             return default(E);
         }
 
-		public abstract Task<IListener> CreateListenerAsync(ListenerFactoryContext context);
+        public abstract Task<IListener> CreateListenerAsync(ListenerFactoryContext context);
         /*
         public Task<IListener> CreateListenerAsync(ListenerFactoryContext context)
         {
@@ -90,7 +90,7 @@ namespace TwitterTriggerExtension
         }
         */
 
-		public ParameterDescriptor ToParameterDescriptor()
+        public ParameterDescriptor ToParameterDescriptor()
         {
             string filter = _attribute.Filter;
             string user = _attribute.User;
@@ -118,5 +118,5 @@ namespace TwitterTriggerExtension
                 return null;
             }
         }
-	}
+    }
 }
