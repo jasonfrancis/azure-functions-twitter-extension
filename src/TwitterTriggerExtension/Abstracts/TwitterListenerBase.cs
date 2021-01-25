@@ -22,7 +22,7 @@ namespace TwitterTriggerExtension
 
         public abstract void Cancel();
 
-        public void Dispose() => Cancel();
+        public virtual void Dispose() => Cancel();
 
         public abstract Task StartAsync(CancellationToken cancellationToken);
 

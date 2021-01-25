@@ -22,10 +22,17 @@ namespace TwitterTriggerExtension
 
 		public override void Cancel()
 		{
+			_log.LogWarning("TwitterV2Listener - Invoking Cancel() method.");
 			if(_filteredStream != null)
 			{
 				_filteredStream.StopStream();
 			}
+		}
+
+		public override void Dispose()
+		{
+			_log.LogWarning("TwitterV2Listener - Invoking Dispose() method.");
+			Cancel();
 		}
 
 		public override async Task StartAsync(CancellationToken cancellationToken)
@@ -110,6 +117,7 @@ namespace TwitterTriggerExtension
 
 		public override Task StopAsync(CancellationToken cancellationToken)
 		{
+			_log.LogWarning("TwitterV2Listener - Invoking StopAsync() method.");
 			_filteredStream.StopStream();
 			return Task.CompletedTask;
 		}
